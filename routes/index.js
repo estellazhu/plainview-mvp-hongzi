@@ -23,15 +23,16 @@ client.get('supported_websites/', function(err, res, supportedWebsites) {
     supportedWebsites.forEach(function(website){
         supportedDomainsUrls.push(website.site_url);
     });
-    console.log(supportedDomainsUrls)
-    //load file synch (i.e. overlay.js)
+    // console.log(supportedDomainsUrls)
+
+    // Add js overlay
     var jsContent = fs.readFileSync('routes/overlay.js', 'utf8');
-    console.log(jsContent);
+    // console.log(jsContent);
 
     swat_proxy.proxyMultiple(supportedDomainsUrls, {
         selector: 'body',
         manipulation: swat_proxy.Manipulations.APPEND,
-        content: '<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script><script>' + jsContent + '</script>',
+        content: jsContent,
         matchType: 'domain'
     });
 });

@@ -1,45 +1,56 @@
-var msg = document.createElement("div");
-msg.setAttribute("class", "msg");
-msg.style.width = "100%";
-msg.style.pedding = "15px";
-msg.style.marginBottom= "20px";
-msg.style.border = "1px solid transparent";
-msg.style.borderRadius = "4px";
-msg.style.borderColor = "#bce8f1";
-msg.style.backgroundColor = "#d9edf7";
-msg.style.color = "#245269";
-msg.style.zIndex = "10";
-msg.style.lineHeight = "170%";
-$("body").append(msg);
 
-// logo
-var logo = document.createElement("h3");
-logo.style.margin = "0 10px 0 10px";
-logo.style.display = "inline";
-logo.innerHTML = "Plainview";
-$(".msg").append(logo);
+<div id="my_popup" class="remove-all-inherited">
+  <span id="pv" class="remove-all-inherited content">Plainview</span>
+  <span id="msg" class="remove-all-inherited content">This is a message.</span>
+  <span id="my_popup_close" class="remove-all-inherited content">&times;</span>
+</div>
 
-// archival info
-function showMessage(finalizedTime) {
-  var message = document.createElement("span");
-  message.style.margin = "0 auto";
-  message.innerHTML = "This article has been unchanged since [" + finalizedTime + "].";
-  $(".msg").append(message);
-}
+<script src="https://code.jquery.com/jquery-1.8.2.min.js"></script>
+<script src="https://cdn.rawgit.com/vast-engineering/jquery-popup-overlay/1.7.13/jquery.popupoverlay.js"></script>
 
-var url = "http://www.cnn.com/2017/04/27/politics/trump-executive-orders/index.html";
-var text = "While the orders have run";
+<script>
+  // $(document).ready(function() {
+  //   var swapC = function() {
+  //     window.setTimeout(function() { swapC() }, 500);
+      // $('.remove-all-inherited').removeAttr('style');
+      $('.remove-all-inherited').css('all', 'initial');
 
-$.ajax({
-  method: "POST",
-  url: "http://www.plainview.io/archives",
-  data: {url: url, text: text},
-  dataType: "json",
-  success: function(data) {
-    // console.log(data);
-    var finalizedTime = data.archive.times.finalized;
-    showMessage(finalizedTime);
-  }
-});
+      $('#my_popup').popup({
+        opacity: 100,
+        backgroundactive: true,
+        autoopen: true,
+        vertical: 'top',
+        horizontal: 'center',
+        autozindex: true
+      });
 
-// article info modal
+      $('#my_popup').attr('style', 'position: fixed !important');
+      $('#my_popup').attr('style', 'top: 0 !important');
+      $('#my_popup').css('box-sizing', 'border-box');
+      $('#my_popup').css('width', '100%');
+      $('#my_popup').css('line-height', '120%');
+      $('#my_popup').css('margin', '0 auto');
+      $('#my_popup').css('border', '1px solid transparent');
+      $('#my_popup').css('border-radius', '4px');
+      $('#my_popup').css('border-radius', '4px');
+      $('#my_popup').css('background-color', '#8cbfd9');
+      $('#my_popup').css('z-index', '100');
+      $('#my_popup').css('display', 'flex');
+
+      $('.content').css('display', 'inline');
+      $('.content').css('margin', '10px');
+      $('.content').css('vertical-align', 'middle');
+      $('.content').css('color', '#000');
+
+      $('#pv').css('font-weight', 'bold');
+      $('#my_popup_close').css('cursor', 'pointer');
+      $('#my_popup_close').css('position', 'absolute');
+      $('#my_popup_close').css('right', '0');
+
+      $('#my_popup_close').click(function() {
+        $('#my_popup').css('display', 'none');
+      })
+  //     swapC();
+  //   };
+  // });
+</script>
