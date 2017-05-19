@@ -5,7 +5,8 @@
   <span id="my_popup_close" class="remove-all-inherited content">&times;</span>
 </div>
 
-<script src="https://code.jquery.com/jquery-1.8.2.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://cdn.rawgit.com/vast-engineering/jquery-popup-overlay/1.7.13/jquery.popupoverlay.js"></script>
 
 <script>
@@ -53,4 +54,5 @@
   //     swapC();
   //   };
   // });
+
 </script>

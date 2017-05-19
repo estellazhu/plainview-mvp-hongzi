@@ -6,39 +6,62 @@ var httpProxy = require('http-proxy');
 var http = require('http');
 var rp = require('request-promise');
 var swat_proxy = require('swat-proxy');
-
+var fs = require('fs');
 var router = express.Router();
+var request = require('request-json');
+var path = require('path');
 
 var utils = require('../helpers/tools');
 var pv = require('../helpers/api_caller');
 
-var request = require('request-json');
 var client = request.createClient('http://www.plainview.io/');
 
 var supportedDomainsUrls = [];
 
-var fs = require('fs');
+var overlay = fs.readFileSync('routes/overlay.js', 'utf8');
+var tooltip = fs.readFileSync('routes/tooltip.js', 'utf8');
 
 client.get('supported_websites/', function(err, res, supportedWebsites) {
     supportedWebsites.forEach(function(website){
         supportedDomainsUrls.push(website.site_url);
     });
-    // console.log(supportedDomainsUrls)
-
-    // Add js overlay
-    var jsContent = fs.readFileSync('routes/overlay.js', 'utf8');
-    // console.log(jsContent);
-
-    swat_proxy.proxyMultiple(supportedDomainsUrls, {
-        selector: 'body',
-        manipulation: swat_proxy.Manipulations.APPEND,
-        content: jsContent,
-        matchType: 'domain'
-    });
 });
 
-router.get('/b', function(req, res){
-	swat_proxy.deliverWebpage({}, res, "http://www.rawstory.com/");
+router.get('/', function(req, res){
+  console.log('123123123');
+  res.sendFile('index.html');
+});
+
+router.post('/', function(req, res){
+  var hi = '"'+req.url+'"';
+  swat_proxy.proxyMultiple(supportedDomainsUrls, {
+      selector: 'head',
+      manipulation: swat_proxy.Manipulations.APPEND,
+      content: '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">',
+      matchType: 'domain'
+  });
+
+  swat_proxy.proxyMultiple(supportedDomainsUrls, {
+      selector: 'body',
+      manipulation: swat_proxy.Manipulations.APPEND,
+      content: overlay,
+      matchType: 'domain'
+  });
+
+  swat_proxy.proxyMultiple(supportedDomainsUrls, {
+      selector: 'body',
+      manipulation: swat_proxy.Manipulations.APPEND,
+      content: tooltip,
+      matchType: 'domain'
+  });
+
+  // swat_proxy.proxyMultiple(supportedDomainsUrls, {
+  //     selector: 'body',
+  //     manipulation: swat_proxy.Manipulations.APPEND,
+  //     content: "<script>alert("+hi+")</script>",
+  //     matchType: 'domain'
+  // });
+	swat_proxy.deliverWebpage({}, res, req.body.url);
 });
 
 router.get('/statusCode/:url', function(req, res){
@@ -99,16 +122,6 @@ router.get('/http://*', function(req, res) {
 		});
 	}
 });
-
-
-// function renderPage(req, res){
-// 	if (req.statusCode > 400){
-// 		res.render('error', {statusCode: req.statusCode});
-// 	} else {
-// 		res.render('url', {url: "google", statusCode: req.statusCode});
-// 	}
-// }
-
 
 router.get('/', function(req, res) {
 	res.send("It is working!");
